@@ -1,4 +1,4 @@
-## My Python FTP
+## My Python FTP [![Build Status](https://travis-ci.org/lays147/MyPythonFTP.svg?branch=master)](https://travis-ci.org/lays147/MyPythonFTP)
 
 *****
 
