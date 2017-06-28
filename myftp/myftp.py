@@ -2,23 +2,18 @@ import os
 from ftplib import FTP
 from paramiko.client import SSHClient, AutoAddPolicy
 from contextlib import closing
-from config import config
 
 
-def export_via_ftp(local_file, file_name):
+def export_via_ftp(local_obj_file, file_name, **config):
     with closing(FTP(
             host=config['host'],
             user=config['user'],
             passwd=config['password'])) as ftp:
         ftp.cwd(config['destination'])
-        with open(local_file, 'rb') as f:
-            if os.path.isfile(local_file):
-                ftp.storbinary(('STOR {}').format(package_name), f)
-            else:
-                raise IOError('File {} not found!'.format(local_file))
+        ftp.storbinary('STOR '+ file_name, local_obj_file)
 
 
-def export_via_sftp(local_file, file_name):
+def export_via_sftp(local_file, file_name, **config):
     with closing(SSHClient()) as client:
         client.set_missing_host_key_policy(AutoAddPolicy)
         client.connect(
@@ -28,16 +23,12 @@ def export_via_sftp(local_file, file_name):
             password=config['password']
         )
         with closing(client.open_sftp()) as sftp:
-            if os.path.isfile(local_file):
-                sftp.put(local_file, ('{}/{}').format(
-                            config['destination'],
-                            file_name))
-            else:
-                raise IOError('File {} not found!'.format(local_file))
+                sftp.putfo(local_file,
+                    os.path.join(config['destination'], file_name))
 
 
 def export_factory(arg):
-        return EXPORT_TYPE[arg]
+    return EXPORT_TYPE[arg]
 
 
 EXPORT_TYPE = {
