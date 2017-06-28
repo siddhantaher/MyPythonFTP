@@ -25,14 +25,14 @@ class TestFTP(unittest.TestCase):
             'STOR foo', mocked_file)
 
     @patch('myftp.myftp.SSHClient', autospec=True)
-    def test_sftp(self, mock_ssh):
-        mock_client = MagicMock()
-        mock_ssh.return_value = mock_client
+    def test_sftp(self, mocked_ssh):
+        mocked_client = MagicMock()
+        mocked_ssh.return_value = mocked_client
         sftp = export_factory('sftp')
 
-        mock_file = MagicMock()
+        mocked_file = MagicMock()
         sftp(
-            local_file=mock_file,
+            local_file=mocked_file,
             file_name='foo',
             host='localhost',
             port='22',
@@ -40,13 +40,13 @@ class TestFTP(unittest.TestCase):
             password='dev',
             destination='/tmp')
 
-        mock_client.connect.assert_called_once_with(
+        mocked_client.connect.assert_called_once_with(
             hostname='localhost',
                 password='dev',
                 port=22,
                 username='user')
 
-        mock_client.open_sftp.return_value.putfo.assert_called_once_with(
-            mock_file,
+        mocked_client.open_sftp.return_value.putfo.assert_called_once_with(
+            mocked_file,
             '/tmp/foo'
         )
